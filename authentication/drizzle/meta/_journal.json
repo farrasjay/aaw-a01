@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1740049038883,
+      "tag": "0000_same_ma_gnuci",
+      "breakpoints": true
+    }
+  ]
+}

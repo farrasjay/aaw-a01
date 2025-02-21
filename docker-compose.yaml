@@ -1,25 +1,100 @@
 version: '3.8'
 
 services:
-  marketplace:
-    build: .
+  authentication:
+    build: ./authentication/
     ports:
       - "8000:8000"
     environment:
       - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
       - JWT_SECRET=auth_ms_jwt_secret
+      - ADMIN_JWT_SECRET=admin_auth_ms_jwt_secret
+      - ADMIN_TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-      - DB_NAME=marketplace
+      - DB_NAME=aaw-marketplace-authentication
+    depends_on:
+      - db
+
+  orders:
+    build: ./orders/
+    ports:
+      - "8001:8000"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - ADMIN_JWT_SECRET=admin_auth_ms_jwt_secret
+      - ADMIN_TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=aaw-marketplace-orders
+      - VERIFY_TOKEN_API_URL=http://authentication:8000/api/auth/verify-token
+    depends_on:
+      - db
+
+  products:
+    build: ./products/
+    ports:
+      - "8002:8000"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - ADMIN_JWT_SECRET=admin_auth_ms_jwt_secret
+      - ADMIN_TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=aaw-marketplace-products
+      - VERIFY_TOKEN_API_URL=http://authentication:8000/api/auth/verify-token
+      - GET_TENANT_API_URL=http://tenant:8000/api/tenant/
+    depends_on:
+      - db
+
+  tenant:
+    build: ./tenant/
+    ports:
+      - "8003:8000"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - ADMIN_JWT_SECRET=admin_auth_ms_jwt_secret
+      - ADMIN_TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=aaw-marketplace-tenant
+      - VERIFY_TOKEN_API_URL=http://authentication:8000/api/auth/verify-token
+    depends_on:
+      - db
+
+  wishlist:
+    build: ./wishlist/
+    ports:
+      - "8004:8000"
+    environment:
+      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - JWT_SECRET=auth_ms_jwt_secret
+      - ADMIN_JWT_SECRET=admin_auth_ms_jwt_secret
+      - ADMIN_TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=aaw-marketplace-wishlist
+      - VERIFY_TOKEN_API_URL=http://authentication:8000/api/auth/verify-token
     depends_on:
       - db
 
   db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: marketplace
+      #POSTGRES_DB: marketplace
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
