@@ -85,3 +85,10 @@ GET /api/cart - Shopping cart
 ## Database Schema
 
 Managed through Drizzle ORM with migrations in drizzle directory.
+
+## Workload Design
+
+```
+artillery run test-load.yaml --output result.json
+artillery report result.json
+```
