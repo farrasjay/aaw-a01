@@ -1,0 +1,16 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 60  # Selama 1 menit
+      arrivalRate: 10  # 10 request per detik (normal load)
+    - duration: 30
+      arrivalRate: 50  # 50 request per detik (peak load)
+    - duration: 60
+      arrivalRate: 5  # 5 request per detik (low load)
+scenarios:
+  - flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "TestUser01"
+            password: "testuser01"
