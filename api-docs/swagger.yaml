@@ -1,0 +1,333 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  description: API documentation for AAW | Marketplace.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8000/api/auth/
+    description: Authentication Service
+  - url: http://localhost:8001/api/order
+    description: Order Service
+  - url: http://localhost:8001/api/cart
+    description: Cart Service
+  - url: http://localhost:8002/api/product/
+    description: Product Service
+  - url: http://localhost:8003/api/tenant/
+    description: Tenant Service
+  - url: http://localhost:8004/api/wishlist/
+    description: Wishlist Service
+
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: User registered successfully
+
+  /login:
+    post:
+      summary: Login a user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: User logged in successfully
+
+  /verify-token:
+    post:
+      summary: Verify a user token
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: Token verified
+
+  /verify-admin-token:
+    post:
+      summary: Verify an admin token
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: Admin token verified
+
+  /order:
+    get:
+      summary: Get all orders
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of orders
+
+    post:
+      summary: Place a new order
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaceOrderRequest"
+      responses:
+        "201":
+          description: Order placed successfully
+
+  /order/{orderId}:
+    get:
+      summary: Get order details
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order details retrieved successfully
+
+  /order/{orderId}/pay:
+    post:
+      summary: Pay for an order
+      tags:
+        - Orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayOrderRequest"
+      responses:
+        "200":
+          description: Order paid successfully
+
+  /order/{orderId}/cancel:
+    post:
+      summary: Cancel an order
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CancelOrderRequest"
+      responses:
+        "200":
+          description: Order canceled successfully
+
+  /cart:
+    get:
+      summary: Get all cart items
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of cart items
+
+    post:
+      summary: Add item to cart
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToCartRequest"
+      responses:
+        "201":
+          description: Item added to cart successfully
+
+    put:
+      summary: Edit cart item
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditCartRequest"
+      responses:
+        "200":
+          description: Cart item updated successfully
+
+    delete:
+      summary: Remove item from cart
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Item removed from cart successfully
+
+  /product:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        "200":
+          description: List of products
+
+  /product/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product details
+
+  /wishlist:
+    get:
+      summary: Get all wishlist items
+      tags:
+        - Wishlist
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of wishlist items
+
+    post:
+      summary: Add product to wishlist
+      tags:
+        - Wishlist
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddWishlistRequest"
+      responses:
+        "201":
+          description: Product added to wishlist successfully
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    PlaceOrderRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: integer
+
+    PayOrderRequest:
+      type: object
+      properties:
+        order_id:
+          type: string
+        payment_method:
+          type: string
+
+    CancelOrderRequest:
+      type: object
+      properties:
+        order_id:
+          type: string
+        reason:
+          type: string
+
+    AddToCartRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: integer
+
+    EditCartRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+        quantity:
+          type: integer
+
+    AddWishlistRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+
+security:
+  - bearerAuth: []
