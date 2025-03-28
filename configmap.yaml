@@ -4,5 +4,5 @@ metadata:
   name: global-config
   namespace: marketplace
 data:
-  DB_HOST: postgres
-  DB_PORT: 5432
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
