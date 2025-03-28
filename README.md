@@ -92,3 +92,39 @@ Managed through Drizzle ORM with migrations in drizzle directory.
 artillery run test-load.yaml --output result.json
 artillery report result.json
 ```
+
+## A03 | Kubernetes Deployment
+
+```
+#runthrough
+
+docker login
+
+docker tag aaw-marketplace-authentication farrasjay/authentication:latest
+docker push farrasjay/authentication:latest
+
+docker tag aaw-marketplace-orders farrasjay/orders:latest
+docker push farrasjay/orders:latest
+
+docker tag aaw-marketplace-products farrasjay/products:latest
+docker push farrasjay/products:latest
+
+docker tag aaw-marketplace-tenant farrasjay/tenant:latest
+docker push farrasjay/tenant:latest
+
+docker tag aaw-marketplace-wishlist farrasjay/wishlist:latest
+docker push farrasjay/wishlist:latest
+
+kubectl apply -f namespace.yaml
+kubectl apply -f configmap.yaml
+kubectl apply -f secret.yaml
+kubectl apply -f postgresql.yaml
+
+kubectl apply -f authentication.yaml
+kubectl apply -f orders.yaml
+kubectl apply -f products.yaml
+kubectl apply -f tenant.yaml
+kubectl apply -f wishlist.yaml
+
+kubectl get deployments -n marketplace -o wide
+```
